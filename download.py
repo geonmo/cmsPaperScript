@@ -4,22 +4,21 @@ import re
 import urllib2
 
 class importPaper :
-  all_info = ""
-  infos = {}
-  status = "Not yet published"
   def __init__(self, paper_infors) :
     decoded_message = str(paper_infors).decode('utf8')
     self.all_info = decoded_message
+    self.infos = {}
+    self.status = "Not yet published"
     for line in decoded_message.split(',') :
       li = line.strip()
       words = li.split('=',1)
       if ( len ( words) != 2 ) : continue
       self.infos[words[0].strip()] = re.sub(' +',' ',words[1].strip().replace('\n',"").replace('\"',""))
-      if "journal" in self.infos :
-        if ( self.infos["journal"].find("Submitted" ) != -1 or not "pages" in self.infos ) :
-          self.status = "Submitted"
-        else : 
-          self.status = "Published"
+    if "journal" in self.infos :
+      if ( self.infos["journal"].find("Submitted" ) != -1 or not "pages" in self.infos ) :
+        self.status = "Submitted"
+      else : 
+        self.status = "Published"
     if "number" in self.infos :
       self.infos["volume"] +="(%s)"%(self.infos["number"])
     self.infos["title"] = self.infos["title"][1:-1]
